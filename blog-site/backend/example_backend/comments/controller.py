@@ -34,9 +34,11 @@ def get_comments(post_id):
 @app.route("/posts/<int:post_id>/comments/<int:comment_id>", methods=("GET",))
 def get_comment(post_id, comment_id):
     post = posts_dao.find(post_id)
+    comment = dao.find(comment_id)
     if post is None:
         raise NotFound(f"No post found with id {post_id}")
-    comment = dao.find(comment_id)
+    elif comment is None:
+        raise NotFound(f"No comment found with id {comment_id}")
     return comment_to_json(comment)
 
 
@@ -54,8 +56,11 @@ def edit(post_id, comment_id):
 @app.route("/posts/<int:post_id>/comments/<int:comment_id>", methods=("DELETE",))
 def delete(post_id, comment_id):
     post = posts_dao.find(post_id)
+    comment = dao.find(comment_id)
     if post is None:
         raise NotFound(f"No post found with id {post_id}")
+    elif comment is None:
+        raise NotFound(f"No comment found with id {comment_id}")
     dao.delete(comment_id)
     return "", http.HTTPStatus.NO_CONTENT
 

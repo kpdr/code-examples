@@ -36,6 +36,7 @@ class CommentsControllerTestCase(unittest.TestCase):
             self.assertEqual("No post found with id 99", response.get_json()["message"])
 
     # TODO fix this test
+    # the issue seems to be that we're not returning a 404 on those missing comments
     def test_get_comment_not_found(self):
         insert_post()
         with app.test_client() as c:
@@ -79,6 +80,7 @@ class CommentsControllerTestCase(unittest.TestCase):
             self.assertEqual("No post found with id 99", response.get_json()["message"])
 
     # TODO fix this test case
+    # same issue called out above
     def test_delete_comment_not_found(self):
         insert_post()
         with app.test_client() as c:
