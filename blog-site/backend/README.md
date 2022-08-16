@@ -2,6 +2,7 @@
 
 Example REST service using Flask. This repo is meant for demonstration/teaching purposes only. Production concerns like performance, scalability and security are absent from this project on purpose.
 
+
 ## Local Development
 
 ### Docker
@@ -22,6 +23,8 @@ If you want to access the database directly you can (assuming you have the clien
 ```shell
 mysql -uexampleuser -pdev -h 127.0.0.1 -P 3306 example
 ```
+
+_Change the above port if you've configured the database on a different port via the `./blog-site/.env` file._
 
 The app uses Docker for local development:
 
@@ -55,12 +58,12 @@ make start
 
 Whenever making changes to the models run this command once the changes are in place:
 ```
-flask db migrate -m "Your message here"
+FLASK_APP=example_backend.app poetry run flask db migrate -m "things"
 ```
 
 This will produce a migration script like:
 ```
-example/migrations/versions/177e5febe83c_.py
+example/migrations/versions/177e5febe83c_things.py
 ```
 
 You can verify the script looks correct. When the application starts up, database migrations will run automatically to apply those changes.
@@ -69,7 +72,6 @@ You can verify the script looks correct. When the application starts up, databas
 
 The following are small tasks/problems to get familiar with this project:
 
- - Replace `comment_to_json`/`post_to_json` functions with something re-usable. The goal is if we add additional entities (like tags, audit history, comment voting) we don't need to copy/paste the same code every time
  - Add `updated_at` timestamps to posts and comments. This will involve a database migration and code change
  - When returning a post via `/posts` or `/posts/<post-id>`, add an attribute in the JSON response for the number of comments instead of all the comments themselves
  - Replace the existing delete functionality with "soft deletes"

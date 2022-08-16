@@ -1,5 +1,6 @@
 import moment from "moment";
 import React, {Component} from 'react'
+import {withCookies} from "react-cookie";
 import { Link } from "react-router-dom";
 
 
@@ -16,12 +17,19 @@ class BlogPostsList extends Component {
             .catch(console.log)
     }
     render() {
+        const { cookies } = this.props.cookies;
+        const isLoggedIn = cookies["logged-in-user"] !== undefined;
         return (
             <div>
                 <div className="d-grid gap-2 d-sm-flex justify-content-sm-center">
-                    <Link to="/post-form">
-                        <button type="button" className="btn btn-primary btn-lg px-4 gap-3">Create New Post!</button>
-                    </Link>
+                    {isLoggedIn ? (
+                        <Link to="/post-form">
+                            <button type="button" className="btn btn-primary btn-lg px-4 gap-3">Create New Post!</button>
+                        </Link>
+                    ) : (
+                        <button type="button" className="btn btn-secondary btn-lg px-4 gap-3" disabled>Must login to create posts</button>
+                    )}
+
                 </div>
 
                 <div className="list-group w-auto">
@@ -44,4 +52,4 @@ class BlogPostsList extends Component {
     }
 }
 
-export default BlogPostsList
+export default withCookies(BlogPostsList)

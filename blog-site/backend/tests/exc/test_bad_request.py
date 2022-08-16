@@ -1,19 +1,11 @@
-import unittest
+from tests.base_classes import BaseAppTestCase
 
-from example_backend.app import app
 from example_backend.exc.bad_request import BadRequest, handle_bad_request
 
 BAD_REQ = BadRequest("unit test message", status_code=401, payload={"k1": "v1"})
 
 
-class BadRequestTestCase(unittest.TestCase):
-    def setUp(self):
-        self.app_context = app.app_context()
-        self.app_context.push()
-
-    def tearDown(self):
-        self.app_context.pop()
-
+class BadRequestTestCase(BaseAppTestCase):
     def test_to_dict(self):
         self.assertEqual("unit test message", BAD_REQ.message)
         self.assertEqual(401, BAD_REQ.status_code)

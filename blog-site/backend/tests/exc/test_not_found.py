@@ -1,19 +1,11 @@
-import unittest
+from tests.base_classes import BaseAppTestCase
 
-from example_backend.app import app
 from example_backend.exc.not_found import NotFound, handle_not_found
 
 NOT_FOUND = NotFound("unit test message")
 
 
-class NotFoundTestCase(unittest.TestCase):
-    def setUp(self):
-        self.app_context = app.app_context()
-        self.app_context.push()
-
-    def tearDown(self):
-        self.app_context.pop()
-
+class NotFoundTestCase(BaseAppTestCase):
     def test_to_dict(self):
         self.assertEqual("unit test message", NOT_FOUND.message)
         self.assertEqual(404, NOT_FOUND.status_code)

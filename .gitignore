@@ -130,3 +130,6 @@ dmypy.json
 
 # PyCharm IDE
 .idea/
+
+# custom ignores for this project
+blog-site/backend/db-backups/

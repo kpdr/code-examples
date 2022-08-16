@@ -26,6 +26,8 @@ services:
       - "4000:4000"
     environment:
       DB_HOST: db
+    volumes:
+      - ./backend/db-backups:/app/alchemydumps-backup
 
   database:
     container_name: db
@@ -35,7 +37,7 @@ services:
       start_period: 10s
       interval: 5s
     ports:
-      - "3307:3306"
+      - "${MYSQL_HOST_PORT}:3307"
     environment:
       MYSQL_ROOT_PASSWORD: dev
       MYSQL_DATABASE: example

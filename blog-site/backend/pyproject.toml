@@ -5,27 +5,32 @@ description = "An example application using Flask, a database, Docker, etc"
 authors = ["Stephen Mullins <smullins7@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
-click = "7.1.2"
+python = ">=3.8,<3.10.0"
+click = "8.1.3"
 Flask = "1.1.2"
 itsdangerous= "1.1.0"
 Jinja2 = "2.11.3"
 MarkupSafe = "1.1.1"
 Werkzeug = "1.0.1"
 Flask-SQLAlchemy = "2.5.1"
-Flask-Migrate = "2.7.0"
+Flask-Migrate = "3.1.0"
 SQLAlchemy-serializer = "^1.3.4"
 Flask-Cors = "^3.0.10"
 PyMySQL = "^1.0.2"
 importlib-metadata = {version = "^3.4.0", python = "<3.8"}
 toml = "^0.10.2"
+flask-alchemydumps = "^0.0.13"
+google-auth = "^2.9.0"
+requests = "^2.28.1"
+environs = "^9.5.0"
+coveralls = "^3.3.1"
 
 [tool.poetry.dev-dependencies]
-pytest = "^6.1.2"
-pytest-cov = "^2.11.1"
-black = "22.3.0"  # match to .pre-commit-config.yaml
-isort = "5.7.0"  # match to .pre-commit-config.yaml
-pre-commit = "^2.11.1"
+pytest = "^6.2.4"
+pytest-cov = "^3.0.0"
+black = "22.6.0"  # match to .pre-commit-config.yaml
+isort = "5.10.1"  # match to .pre-commit-config.yaml
+pre-commit = "^2.20.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -36,6 +41,7 @@ log_cli = true
 log_cli_level = "debug"
 addopts = "-v"
 testpaths = ["tests"]
+pythonpath = ["."]
 
 [tool.black]
 line_length = 120

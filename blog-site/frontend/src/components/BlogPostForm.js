@@ -1,7 +1,9 @@
 import {Component} from "react";
+import {withCookies} from "react-cookie";
 
 class BlogPostForm extends Component {
     state = {
+        id: 0,
         title: "",
         content: "",
     }
@@ -24,14 +26,20 @@ class BlogPostForm extends Component {
             [e.target.name]: e.target.value,
         })
     }
+    isUpdate() {
+        return this.state.id > 0;
+    }
     handleSubmit = async e => {
         e.preventDefault();
+        const { cookies } = this.props;
+        const user = cookies.get("logged-in-user");
         console.log(this.state);
         try {
-            fetch("http://127.0.0.1:4000/posts", {
-                method: "POST",
+            fetch("http://127.0.0.1:4000/posts" + (this.isUpdate() ? `/${this.state.id}`  : ""), {
+                method: this.isUpdate() ? "PUT" : "POST",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${user.jwt}`
                 },
                 body: JSON.stringify({
                     title: this.state.title,
@@ -86,4 +94,4 @@ class BlogPostForm extends Component {
 
 }
 
-export default BlogPostForm
+export default withCookies(BlogPostForm)

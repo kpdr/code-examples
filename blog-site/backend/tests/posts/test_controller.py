@@ -1,28 +1,10 @@
-import unittest
-
+from tests.base_classes import BaseControllerTestCase
 from tests.testdata.db_helper import insert_comment, insert_post
 
-from example_backend.app import app, db
 
-
-class PostsControllerTestCase(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        app.config["SERVER_NAME"] = "localhost:5000"
-        app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite://"
-        cls.client = app.test_client()
-
-    def setUp(self):
-        db.create_all()
-        self.app_context = app.app_context()
-        self.app_context.push()
-
-    def tearDown(self):
-        db.drop_all()
-        self.app_context.pop()
-
+class PostsControllerTestCase(BaseControllerTestCase):
     def test_create_succeeds(self):
-        with app.test_client() as c:
+        with self.client as c:
             response_json = c.post(
                 "/posts", json={"title": "unit test title", "content": "unit test content"}
             ).get_json()
@@ -32,20 +14,20 @@ class PostsControllerTestCase(unittest.TestCase):
             self.assertIsNotNone(response_json["created"])
 
     def test_create_no_title_error(self):
-        with app.test_client() as c:
+        with self.client as c:
             response = c.post("/posts", json={"content": "unit test content"})
             self.assertEqual(400, response.status_code)
             self.assertEqual("Title is required", response.get_json()["message"])
 
     def test_get_post_not_found(self):
-        with app.test_client() as c:
+        with self.client as c:
             response = c.get("/posts/99")
             self.assertEqual(404, response.status_code)
             self.assertEqual("No post found with id 99", response.get_json()["message"])
 
     def test_get_post(self):
         insert_post()
-        with app.test_client() as c:
+        with self.client as c:
             response = c.get("/posts/1")
             self.assertEqual(200, response.status_code)
             response_json = response.get_json()
@@ -56,14 +38,14 @@ class PostsControllerTestCase(unittest.TestCase):
 
     def test_edit_post_no_title(self):
         insert_post()
-        with app.test_client() as c:
+        with self.client as c:
             response = c.put("/posts/1", json={"content": "unit test content"})
             self.assertEqual(400, response.status_code)
             self.assertEqual("Title is required", response.get_json()["message"])
 
     def test_edit_post(self):
         insert_post()
-        with app.test_client() as c:
+        with self.client as c:
             response = c.put("/posts/1", json={"title": "updated-title", "content": "updated-content"})
             self.assertEqual(200, response.status_code)
             response_json = response.get_json()
@@ -74,18 +56,18 @@ class PostsControllerTestCase(unittest.TestCase):
 
     def test_delete(self):
         insert_post()
-        with app.test_client() as c:
+        with self.client as c:
             response = c.delete("/posts/1")
             self.assertEqual(204, response.status_code)
 
     def test_delete_not_found(self):
-        with app.test_client() as c:
+        with self.client as c:
             response = c.delete("/posts/99")
             self.assertEqual(404, response.status_code)
             self.assertEqual("No post found with id 99", response.get_json()["message"])
 
     def test_index_empty(self):
-        with app.test_client() as c:
+        with self.client as c:
             response = c.get("/posts")
             self.assertEqual(200, response.status_code)
             self.assertEqual([], response.get_json())
@@ -93,7 +75,7 @@ class PostsControllerTestCase(unittest.TestCase):
     def test_index(self):
         insert_post()
         insert_comment()
-        with app.test_client() as c:
+        with self.client as c:
             response = c.get("/posts")
             self.assertEqual(200, response.status_code)
             response_json = response.get_json()

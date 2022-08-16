@@ -1,14 +1,15 @@
-import os
 import uuid
 from logging.config import dictConfig
 
 from flask import Flask
 from flask_cors import CORS
-from flask_migrate import Migrate
-from flask_sqlalchemy import SQLAlchemy
 
+from example_backend.comments import controller as comments_controller
 from example_backend.exc.bad_request import BadRequest, handle_bad_request
 from example_backend.exc.not_found import NotFound, handle_not_found
+from example_backend.extensions import alchemydumps, db, migrate
+from example_backend.posts import controller as posts_controller
+from example_backend.users import controller as users_controller
 
 dictConfig(
     {
@@ -34,19 +35,28 @@ dictConfig(
     }
 )
 
-app = Flask(__name__)
-app.config["SECRET_KEY"] = str(uuid.uuid4())
-# In a production app, credentials would be pulled from secret store
-DB_HOST = os.environ.get("DB_HOST", "127.0.0.1")
-app.config["SQLALCHEMY_DATABASE_URI"] = f"mysql+pymysql://exampleuser:dev@{DB_HOST}/example"
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-CORS(app)
 
-app.register_error_handler(BadRequest, handle_bad_request)
-app.register_error_handler(NotFound, handle_not_found)
+def create_app(config_object="example_backend.settings"):
+    app = Flask(__name__)
+    app.config.from_object(config_object)
+    app.config["SECRET_KEY"] = str(uuid.uuid4())
 
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
+    CORS(app)
 
-from example_backend.comments import controller
-from example_backend.posts import controller as posts_controller
+    app.register_error_handler(BadRequest, handle_bad_request)
+    app.register_error_handler(NotFound, handle_not_found)
+    register_extensions(app)
+    register_blueprints(app)
+    return app
+
+
+def register_extensions(app):
+    db.init_app(app)
+    migrate.init_app(app, db)
+    alchemydumps.init_app(app, db)
+
+
+def register_blueprints(app):
+    app.register_blueprint(users_controller.blueprint)
+    app.register_blueprint(posts_controller.blueprint)
+    app.register_blueprint(comments_controller.blueprint)

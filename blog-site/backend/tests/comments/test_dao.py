@@ -1,25 +1,10 @@
-import unittest
-
-from sqlalchemy.ext.declarative import declarative_base
-
-from tests.testdata.db_helper import clear_db, config_db, create_db, insert_comment
+from tests.base_classes import BaseDAOTestCase
+from tests.testdata.db_helper import insert_comment
 
 from example_backend.comments import dao
 
-Base = declarative_base()
 
-
-class DAOTestCase(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        config_db()
-
-    def setUp(self):
-        create_db()
-
-    def tearDown(self):
-        clear_db()
-
+class DAOTestCase(BaseDAOTestCase):
     def test_find_all_empty(self):
         result = dao.find_all()
         self.assertEqual([], result)
@@ -36,7 +21,7 @@ class DAOTestCase(unittest.TestCase):
         self.assert_comment(result)
 
     def test_insert(self):
-        result = dao.insert("title-1", "content-1")
+        result = dao.insert("title-1", "content-1", 1)
         self.assert_comment(result)
 
     def test_delete(self):
